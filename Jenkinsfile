@@ -56,12 +56,13 @@ pipeline {
         }
 
         stage("Deploy Image to EC2 Instance") {
-            def APP_URL = "${DOCKER_REPO}:${IMAGE_NAME}"
-            def ec2Instance = "ec2-user@13.246.20.124"
-            def shellCmd = "bash entry-script.sh ${APP_URL}"
-            
             steps {
                 script {
+                    echo "Deploying to ec2 Instance ..."
+                    def APP_URL = "${DOCKER_REPO}:${IMAGE_NAME}"
+                    def ec2Instance = "ec2-user@13.246.20.124"
+                    def shellCmd = "bash entry-script.sh ${APP_URL}"
+            
                     sshagent(['ec2-webserver']) {
                     sh "scp -o StrictHostKeyChecking=no docker-compose.yaml"
                     sh "scp -o StrictHostKeyChecking=no entry-script.sh"
@@ -76,6 +77,7 @@ pipeline {
         stage("Version Increment"){
             steps {
                 script {
+                    echo  "Incrementing Version in pom.xml..."
                     withCredentials([usernamePassword (credentialsId: 'github-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]){
                         sh "git config --global user.name 'jenkins' "
                         sh "git config --global user.email 'jenkins@gmail.com' "
