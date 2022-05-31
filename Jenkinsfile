@@ -65,8 +65,8 @@ pipeline {
                     def shellCmd = "bash entry-script.sh ${APP_URL}"
             
                     sshagent(['ec2-webserver']) {
-                    sh "scp -o StrictHostKeyChecking=no docker-compose.yaml"
-                    sh "scp -o StrictHostKeyChecking=no entry-script.sh"
+                    sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${ec2Instance}:/home/ec2-user"
+                    sh "scp -o StrictHostKeyChecking=no entry-script.sh ${ec2Instance}:/home/ec2-user"
 
                     sh "ssh -o StrictHostKeyChecking=no  ${ec2-Instance} ${shellCmd}"
                     echo "Checking if docker app is up & running"
