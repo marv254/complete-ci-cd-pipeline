@@ -1,7 +1,7 @@
 library identifier: 'jenkins-shared-library@master', retriever: modernSCM(
         [$class: 'GitSCMSource',
-         remote: 'https://gitlab.com/Marv254/jenkins-shared-library.git',
-         credentialsId: 'gitlab-creds'
+         remote: 'https://github.com/marv254/jenkins-shared-library',
+         credentialsId: 'github-creds'
         ]
 )
 
@@ -42,7 +42,6 @@ pipeline {
             steps {
                 script {
                     buildImage("${DOCKER_REPO}:$IMAGE_NAME")
-                    dockerLogin()
                 }
             }
         }
@@ -50,6 +49,7 @@ pipeline {
         stage('Deploy image to private repo'){
             steps {
                 script {
+                    dockerLogin()
                   
                     deployApp("${DOCKER_REPO}:$IMAGE_NAME")
                 }
