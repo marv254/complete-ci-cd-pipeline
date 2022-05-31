@@ -62,7 +62,7 @@ pipeline {
                     echo "Deploying to ec2 Instance ..."
                     def APP_URL = "${DOCKER_REPO}:${IMAGE_NAME}"
                     def ec2Instance = "ec2-user@13.246.20.124"
-                    def shellCmd = "bash entry-script.sh $APP_URL"
+                    def shellCmd = "bash ./entry-script.sh $APP_URL"
             
                     sshagent(['ec2-webserver']) {
                     sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${ec2Instance}:/home/ec2-user"
