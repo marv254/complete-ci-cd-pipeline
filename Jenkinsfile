@@ -1,7 +1,7 @@
 library identifier: 'jenkins-shared-library@master', retriever: modernSCM(
         [$class: 'GitSCMSource',
-         remote: 'https://github.com/marv254/jenkins-shared-library',
-         credentialsId: 'github-creds'
+         remote: 'https://gitlab.com/Marv254/jenkins-shared-library',
+         credentialsId: 'gitlab-creds'
         ]
 )
 
