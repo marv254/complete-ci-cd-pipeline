@@ -68,7 +68,7 @@ pipeline {
                     sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${ec2Instance}:/home/ec2-user"
                     sh "scp -o StrictHostKeyChecking=no entry-script.sh ${ec2Instance}:/home/ec2-user"
 
-                    sh "ssh -o StrictHostKeyChecking=no  ${ec2-Instance} ${shellCmd}"
+                    sh "ssh -o StrictHostKeyChecking=no  ${ec2Instance} ${shellCmd}"
                     echo "Checking if docker app is up & running"
                     sh "docker ps"
                 }
