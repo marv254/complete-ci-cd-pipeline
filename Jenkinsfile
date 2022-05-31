@@ -51,7 +51,7 @@ pipeline {
                 script {
                     dockerLogin()
                   
-                    deployApp("${DOCKER_REPO}:$IMAGE_NAME")
+                    dockerPush("${DOCKER_REPO}:$IMAGE_NAME")
                 }
             }
         }
