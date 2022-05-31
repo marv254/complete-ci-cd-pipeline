@@ -56,7 +56,7 @@ pipeline {
         }
 
         stage("Deploy Image to EC2 Instance") {
-            def $APP_URL = "${DOCKER_REPO}:${IMAGE_NAME}"
+            def APP_URL = "${DOCKER_REPO}:${IMAGE_NAME}"
             def ec2Instance = "ec2-user@13.246.20.124"
             def shellCmd = "bash entry-script.sh ${APP_URL}"
             
