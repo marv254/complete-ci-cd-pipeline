@@ -86,7 +86,7 @@ pipeline {
                         // sh "git remote set-url origin https://${USER}:${PASS}@github.com/marv254/complete-ci-cd-pipeline.git"
                         sh "git add . "
                         sh "git commit -m 'commit CI version bump of pom.xml file'"
-                        sh "git push https://${USER}:${PASS}@github.com/${USER}/complete-ci-cd-pipeline.git"
+                        sh "git push https://${USER}:${PASS}@github.com/${USER}/complete-ci-cd-pipeline.git HEAD:master"
                     }
                 }
             }
