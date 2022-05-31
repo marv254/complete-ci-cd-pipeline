@@ -42,6 +42,7 @@ pipeline {
             steps {
                 script {
                     buildImage("${DOCKER_REPO}:$IMAGE_NAME")
+                    dockerLogin()
                 }
             }
         }
@@ -49,7 +50,7 @@ pipeline {
         stage('Deploy image to private repo'){
             steps {
                 script {
-                    dockerLogin()
+                  
                     deployApp("${DOCKER_REPO}:$IMAGE_NAME")
                 }
             }
