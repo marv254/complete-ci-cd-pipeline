@@ -72,7 +72,7 @@ pipeline {
                     sh "docker ps"
                 }
             }
-        }
+        }}
 
         stage("Version Increment"){
             steps {
@@ -92,6 +92,6 @@ pipeline {
 
     }
 }
-}
+
 
 
