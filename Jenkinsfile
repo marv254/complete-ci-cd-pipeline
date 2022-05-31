@@ -79,10 +79,10 @@ pipeline {
             steps {
                 script {
                     echo  "Incrementing Version in pom.xml..."
-                    withCredentials([usernamePassword (credentialsId: 'github-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]){
+                    withCredentials([usernamePassword (credentialsId: 'gitlab-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]){
                         sh "git config --global user.name 'jenkins' "
                         sh "git config --global user.email 'jenkins@gmail.com' "
-                        sh "git remote seturl origin https://${USER}:${PASS}@gitlab.com/marv254/java-maven-app.git"
+                        sh "git remote seturl origin https://${USER}:${PASS}@gitlab.com/Marv254/java-maven-app.git"
                         sh "git add . "
                         sh "git commit -m 'commit CI version bump of pom.xml file'"
                         sh "git push -u origin jenkins-jobs"
