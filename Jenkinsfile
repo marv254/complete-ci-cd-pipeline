@@ -76,7 +76,7 @@ pipeline {
         stage("Version Increment"){
             steps {
                 script {
-                    withCredentials([usernamePassword (credentialsId: 'github-creds'), usernameVariable: 'USER', passwordVariable: 'PASS']){
+                    withCredentials([usernamePassword (credentialsId: 'github-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]){
                         sh "git config --global user.name 'jenkins' "
                         sh "git config --global user.email 'jenkins@gmail.com' "
                         sh "git remote seturl origin https://${USER}:${PASS}@gitlab.com/marv254/java-maven-app.git"
