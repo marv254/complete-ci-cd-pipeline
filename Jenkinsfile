@@ -57,56 +57,56 @@ pipeline {
                 script {
                     dir('terraform'){
                         sh "terraform init"
-                        sh "terraform apply --auto-approve"
-                        sh "terraform output"
-                        EC2_PUBLIC_IP = sh (
-                            script: "terraform output ec2_public_ip",
-                            returnStdout: true
-                            ).trim()
+                        sh "terraform destroy --auto-approve"
+                        // sh "terraform output"
+                        // EC2_PUBLIC_IP = sh (
+                        //     script: "terraform output ec2_public_ip",
+                        //     returnStdout: true
+                        //     ).trim()
                     }
                 }
             }
         }
 
-        stage("Deploy Image to EC2 Instance") {
-            steps {
-                script {
-                    echo "waiting for Ec2 server to initialize.."
-                    sleep(time: 90, unit: "SECONDS")
+        // stage("Deploy Image to EC2 Instance") {
+        //     steps {
+        //         script {
+        //             echo "waiting for Ec2 server to initialize.."
+        //             sleep(time: 90, unit: "SECONDS")
 
-                    echo "Deploying docker image to ec2 Instance ..."
-                    echo "${EC2_PUBLIC_IP}"
+        //             echo "Deploying docker image to ec2 Instance ..."
+        //             echo "${EC2_PUBLIC_IP}"
 
-                    def APP_URL = "${DOCKER_REPO}:${IMAGE_NAME}"
-                    def ec2Instance = "ec2-user@${EC2_PUBLIC_IP}"
-                    def shellCmd = "bash entry-script.sh $APP_URL"
+        //             def APP_URL = "${DOCKER_REPO}:${IMAGE_NAME}"
+        //             def ec2Instance = "ec2-user@${EC2_PUBLIC_IP}"
+        //             def shellCmd = "bash entry-script.sh $APP_URL"
             
-                    sshagent(['myapp-server-ssh-key']) {
-                    sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${ec2Instance}:/home/ec2-user"
-                    sh "scp -o StrictHostKeyChecking=no entry-script.sh ${ec2Instance}:/home/ec2-user"
+        //             sshagent(['myapp-server-ssh-key']) {
+        //             sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${ec2Instance}:/home/ec2-user"
+        //             sh "scp -o StrictHostKeyChecking=no entry-script.sh ${ec2Instance}:/home/ec2-user"
 
-                    sh "ssh -o StrictHostKeyChecking=no  ${ec2Instance} ${shellCmd}"
+        //             sh "ssh -o StrictHostKeyChecking=no  ${ec2Instance} ${shellCmd}"
                 
-                }
-            }
-        }}
+        //         }
+        //     }
+        // }}
 
-        stage("Version Increment"){
-            steps {
-                script {
-                    echo  "Incrementing Version in pom.xml..."
-                    withCredentials([usernamePassword (credentialsId: 'github-token', usernameVariable: 'USER', passwordVariable: 'PASS')]){
-                        sh "git config --global user.name 'jenkins' "
-                        sh "git config --global user.email 'jenkins@gmail.com' "
-                        // sh "git remote add origin https://${USER}/complete-ci-cd-pipeline.git"
-                        // sh "git remote set-url origin https://${USER}:${PASS}@github.com/marv254/complete-ci-cd-pipeline.git"
-                        sh "git add . "
-                        sh "git commit -m 'commit CI version bump of pom.xml file'"
-                        sh "git push https://${USER}:${PASS}@github.com/${USER}/complete-ci-cd-pipeline.git HEAD:master"
-                    }
-                }
-            }
-        }
+        // stage("Version Increment"){
+        //     steps {
+        //         script {
+        //             echo  "Incrementing Version in pom.xml..."
+        //             withCredentials([usernamePassword (credentialsId: 'github-token', usernameVariable: 'USER', passwordVariable: 'PASS')]){
+        //                 sh "git config --global user.name 'jenkins' "
+        //                 sh "git config --global user.email 'jenkins@gmail.com' "
+        //                 // sh "git remote add origin https://${USER}/complete-ci-cd-pipeline.git"
+        //                 // sh "git remote set-url origin https://${USER}:${PASS}@github.com/marv254/complete-ci-cd-pipeline.git"
+        //                 sh "git add . "
+        //                 sh "git commit -m 'commit CI version bump of pom.xml file'"
+        //                 sh "git push https://${USER}:${PASS}@github.com/${USER}/complete-ci-cd-pipeline.git HEAD:master"
+        //             }
+        //         }
+        //     }
+        // }
 
     }
 }
