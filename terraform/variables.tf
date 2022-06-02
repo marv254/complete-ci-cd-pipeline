@@ -11,7 +11,7 @@ variable env_prefix{
     default = "dev"
 }
 variable my_ip{
-    default = "197.232.79.148/32"
+    default = "13.245.13.227/32"
 }
 variable instance_type{
     default = "t3.micro"
