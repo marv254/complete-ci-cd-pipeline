@@ -20,6 +20,9 @@ pipeline {
     stages {
 
         stage('Increment Version') {
+            environment {
+                TF_VAR_env_prefix = "test"
+            }
             steps {
                 script {
                     sh "mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} versions:commit"
@@ -38,17 +41,10 @@ pipeline {
             }
         }
 
-        stage('Build Image') {
+        stage('Build & deploy Image to private repo') {
             steps {
                 script {
                     buildImage("${DOCKER_REPO}:$IMAGE_NAME")
-                }
-            }
-        }
-
-        stage('Deploy image to private repo'){
-            steps {
-                script {
                     dockerLogin()
                   
                     dockerPush("${DOCKER_REPO}:$IMAGE_NAME")
@@ -56,21 +52,41 @@ pipeline {
             }
         }
 
+        stage('Provision server'){
+            steps {
+                script {
+                    dir('terraform'){
+                        sh "terraform init"
+                        sh "terraform apply --auto-approve"
+                        sh "terraform output"
+                        EC2_PUBLIC_IP = sh (
+                            script: "terraform output ec2_public_ip"
+                            returnStdout: true
+                            ).trim()
+                    }
+                }
+            }
+        }
+
         stage("Deploy Image to EC2 Instance") {
             steps {
                 script {
-                    echo "Deploying to ec2 Instance ..."
+                    echo "waiting for Ec2 server to initialize.."
+                    sleep(time: 90, unit: "SECONDS")
+
+                    echo "Deploying docker image to ec2 Instance ..."
+                    echo "${EC2_PUBLIC_IP}"
+
                     def APP_URL = "${DOCKER_REPO}:${IMAGE_NAME}"
-                    def ec2Instance = "ec2-user@13.246.20.124"
+                    def ec2Instance = "ec2-user@${EC2_PUBLIC_IP}"
                     def shellCmd = "bash entry-script.sh $APP_URL"
             
-                    sshagent(['ec2-webserver']) {
+                    sshagent(['myapp-server-ssh-key']) {
                     sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${ec2Instance}:/home/ec2-user"
                     sh "scp -o StrictHostKeyChecking=no entry-script.sh ${ec2Instance}:/home/ec2-user"
 
                     sh "ssh -o StrictHostKeyChecking=no  ${ec2Instance} ${shellCmd}"
-                    echo "Checking if docker app is up & running"
-                    sh "docker ps"
+                
                 }
             }
         }}
