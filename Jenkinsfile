@@ -70,6 +70,9 @@ pipeline {
         }
 
         stage("Deploy Image to EC2 Instance") {
+            environment {
+                DOCKER_CREDS = credentials('docker-hub-creds')
+            }
             steps {
                 script {
                     echo "waiting for Ec2 server to initialize.."
@@ -80,7 +83,7 @@ pipeline {
 
                     def APP_URL = "${DOCKER_REPO}:${IMAGE_NAME}"
                     def ec2Instance = "ec2-user@${EC2_PUBLIC_IP}"
-                    def shellCmd = "bash entry-script.sh $APP_URL"
+                    def shellCmd = "bash entry-script.sh $APP_URL ${DOCKER_CREDS_USR} ${DOCKER_CREDS_PSW}"
             
                     sshagent(['myapp-server-ssh-key']) {
                     sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${ec2Instance}:/home/ec2-user"
