@@ -20,9 +20,7 @@ pipeline {
     stages {
 
         stage('Increment Version') {
-            environment {
-                TF_VAR_env_prefix = "test"
-            }
+         
             steps {
                 script {
                     sh "mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} versions:commit"
@@ -53,6 +51,9 @@ pipeline {
         }
 
         stage('Provision server'){
+               environment {
+                TF_VAR_env_prefix = "test"
+            }
             steps {
                 script {
                     dir('terraform'){
